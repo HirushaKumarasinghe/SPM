@@ -1353,6 +1353,37 @@ public class AppUi extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void calculateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculateBtnActionPerformed
+
+        String code = codetxt.getText();
+        System.out.println(countLines(code));
+        
+        //String array[][] = checkCsKeyWordsJava(code);
+        int rows = countLines(code);
+        String arrayLines [] = printLine(code);
+        String arraKeyWords [] = printKeyWords(code);
+        int arrayCs [] = printCr(code);
+        String arrayCtc [] = printCtc(code);
+        int arrayCnc [] = printCr(code);
+        String arrayCi [] = printCi(code);
+        int arrayTW [] = printCr(code);
+        int arrayCps[] = printCr(code);
+        int arrayCr [] = printCr(code);
+
+        int y = 1;
+        for(int i=0; i<rows;i++){
+            //System.out.println(arrayS[i]);
+            resultTbl.getModel().setValueAt(y,i,0);
+            resultTbl.getModel().setValueAt(arrayLines[i],i,1);
+            resultTbl.getModel().setValueAt(arraKeyWords[i], i, 2);
+            resultTbl.getModel().setValueAt(arrayCs[i], i, 3);
+            resultTbl.getModel().setValueAt(arrayCtc[i], i, 4);
+            resultTbl.getModel().setValueAt(arrayCnc[i], i, 5);
+            resultTbl.getModel().setValueAt(arrayCi[i], i, 6);
+            resultTbl.getModel().setValueAt(arrayTW[i], i, 7);
+            resultTbl.getModel().setValueAt(arrayCps[i], i, 8);
+            resultTbl.getModel().setValueAt(arrayCr[i], i, 9);
+            y++;
+        }
     }//GEN-LAST:event_calculateBtnActionPerformed
 
     private void chooseFiletxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseFiletxtActionPerformed
@@ -1419,20 +1450,12 @@ JFileChooser chooser = new JFileChooser();
     }
     
     public String[] printKeyWords(String code){        
-        //ArrayList<String> code_array = new ArrayList<>();
-        Scanner scanner = new Scanner(code);
-                
         String text = code;        
-        
         int arraySize = countLines(code);  
-        
         String CsKeys[] = new String[arraySize];
-        int Cs[] = new int[arraySize];
-        String outputCs[] = new String[arraySize];
 
 
         for(int i = 0; i<arraySize; i++){
-                    Cs[i] = 0;
                     CsKeys[i] = " ";
         }
                 
@@ -1443,213 +1466,164 @@ JFileChooser chooser = new JFileChooser();
             if(line.contains("&")){
                 if(line.contains("&&")){
                 CsKeys[i] = CsKeys[i] + "&& ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "& ";
-                Cs[i] = Cs[i] + 2;
                 }
             }
             if(line.contains("public")){
                 CsKeys[i] = CsKeys[i] + "public ";
-                Cs[i] = Cs[i] + 2;
             }
             if(line.contains("new")){
                 CsKeys[i] = CsKeys[i] + "new ";
-                Cs[i] = Cs[i] + 2;
             }
             if(line.contains("delete")){
                 CsKeys[i] = CsKeys[i] + "delete ";
-                Cs[i] = Cs[i] + 2;
             }
             if(line.contains("throw")){
                 CsKeys[i] = CsKeys[i] + "throw ";
-                Cs[i] = Cs[i] + 2;
             }
             if(line.contains("throws")){
                 CsKeys[i] = CsKeys[i] + "throws ";
-                Cs[i] = Cs[i] + 2;
             }
             if(line.contains("void")){
                 CsKeys[i] = CsKeys[i] + "void ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("double")){
                 CsKeys[i] = CsKeys[i] + "double ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("int")){
                 CsKeys[i] = CsKeys[i] + "int ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("float")){
                 CsKeys[i] = CsKeys[i] + "float ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("string")){
                 CsKeys[i] = CsKeys[i] + "string ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("printf")){
                 CsKeys[i] = CsKeys[i] + "printf ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("println")){
                 CsKeys[i] = CsKeys[i] + "println ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("print")){
                 CsKeys[i] = CsKeys[i] + "print ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("cout")){
                 CsKeys[i] = CsKeys[i] + "cout ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("cin")){
                 CsKeys[i] = CsKeys[i] + "cin ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("if’")){
                 CsKeys[i] = CsKeys[i] + "if ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("for")){
                 CsKeys[i] = CsKeys[i] + "for ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("while")){
                 CsKeys[i] = CsKeys[i] + "while ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("do")){
                 CsKeys[i] = CsKeys[i] + "do ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("switch")){
                 CsKeys[i] = CsKeys[i] + "switch ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("case")){
                 CsKeys[i] = CsKeys[i] + "case ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("endl’")){
                 CsKeys[i] = CsKeys[i] + "endl ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("'")){
                 CsKeys[i] = CsKeys[i] + "' ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("+")){
                 if(line.contains("++")){
                 CsKeys[i] = CsKeys[i] + "++ ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("+=")){
                 CsKeys[i] = CsKeys[i] + "+= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "+ ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("-")){
                 if(line.contains("--")){
                 CsKeys[i] = CsKeys[i] + "-- ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("->")){
                 CsKeys[i] = CsKeys[i] + "-> ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("-=")){
                 CsKeys[i] = CsKeys[i] + "-= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "- ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("=")){
                 if(line.contains("==")){
                 CsKeys[i] = CsKeys[i] + "== ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "= ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("!")){
                 if(line.contains("!=")){
                 CsKeys[i] = CsKeys[i] + "!= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "! ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains(">")){
                 if(line.contains(">=")){
                 CsKeys[i] = CsKeys[i] + ">= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains(">>=")){
                 CsKeys[i] = CsKeys[i] + ">>= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains(">>>=")){
                 CsKeys[i] = CsKeys[i] + ">>>= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains(">>>")){
                 CsKeys[i] = CsKeys[i] + ">>> ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains(">>")){
                 CsKeys[i] = CsKeys[i] + ">> ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "> ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("<")){
                 if(line.contains("<=")){
                 CsKeys[i] = CsKeys[i] + "<= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("<<=")){
                 CsKeys[i] = CsKeys[i] + "<<= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("<<<=")){
                 CsKeys[i] = CsKeys[i] + "<<<= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("<<<")){
                 CsKeys[i] = CsKeys[i] + "<<< ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("<<")){
                 CsKeys[i] = CsKeys[i] + "<< ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "< ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("*")){
                 if(line.contains("*=")){
                 CsKeys[i] = CsKeys[i] + "*= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 //code for poiner
                 //else if(line.contains("**")){
@@ -1658,115 +1632,80 @@ JFileChooser chooser = new JFileChooser();
                 //}
                 else{
                 CsKeys[i] = CsKeys[i] + "* ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("/")){
                 if(line.contains("/=")){
                 CsKeys[i] = CsKeys[i] + "/= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("//")){
                 CsKeys[i] = CsKeys[i] + "";
-                Cs[i] = Cs[i] + 0;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "/ ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("\\n")){
                 CsKeys[i] = CsKeys[i] + "\\n ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("\\t")){
                 CsKeys[i] = CsKeys[i] + "\\t ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("\\r")){
                 CsKeys[i] = CsKeys[i] + "\\r ";
-                Cs[i] = Cs[i] + 1;
             }
             if(line.contains("|")){
                 if(line.contains("|=")){
                 CsKeys[i] = CsKeys[i] + "|= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else if(line.contains("||")){
                 CsKeys[i] = CsKeys[i] + "|| ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "| ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("%")){
                 if(line.contains("%=")){
                 CsKeys[i] = CsKeys[i] + "%= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "% ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains(":")){
                 if(line.contains("::")){
                 CsKeys[i] = CsKeys[i] + ":: ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + ": ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
             if(line.contains("^")){
                 if(line.contains("^=")){
                 CsKeys[i] = CsKeys[i] + "^= ";
-                Cs[i] = Cs[i] + 1;
                 }
                 else{
                 CsKeys[i] = CsKeys[i] + "^ ";
-                Cs[i] = Cs[i] + 1;
                 }
             }
-            
-            
-            
-            //System.out.print(CsKeys[i] + "      ");
-            //System.out.println(Cs[i]);
-            outputCs[i] = CsKeys[i];
-                        
-            
-
-
             i = i + 1;
         }   
-
-        return outputCs;
-       
+        return CsKeys;
     }
     
     //chamudini
-    public String[] printCr(String code){        
-        //ArrayList<String> code_array = new ArrayList<>();
-        Scanner scanner = new Scanner(code);
-                
+    public int[] printCr(String code){
         String text = code;        
-        
         int arraySize = countLines(code);  
-        
         String CsKeys[] = new String[arraySize];
         int Cs[] = new int[arraySize];
         String outputCs[] = new String[arraySize];
-
 
         for(int i = 0; i<arraySize; i++){
                     Cs[i] = 0;
                     CsKeys[i] = " ";
         }
-                
 
         String[] lines = text.split("\\r?\\n");        
         int i=0;
@@ -2051,21 +1990,9 @@ JFileChooser chooser = new JFileChooser();
                 Cs[i] = Cs[i] + 1;
                 }
             }
-            
-            
-            
-            //System.out.print(CsKeys[i] + "      ");
-            //System.out.println(Cs[i]);
-            outputCs[i] = String.valueOf(Cs[i]);
-                        
-            
-
-
             i = i + 1;
         }   
-
-        return outputCs;
-       
+        return Cs;
     }
     
     /* Author panduka */
@@ -2189,33 +2116,52 @@ JFileChooser chooser = new JFileChooser();
         return outputCs;
        
     } 
-                
-    public void calculateTw(int [] Ctc, int [] Cnc, int [] Ci,int arraySize){
+    
+    //perfect
+    public int[] calculateTw(int [] Ctc, int [] Cnc, int [] Ci, String code){
         
-        int TW[] = new int[arraySize];
-
-        for(int i = 0; i<arraySize; i++){
+        int lineCount = countLines(code);
+        int TW[] = new int[lineCount];
+        for(int i = 0; i<lineCount; i++){
                     TW[i] = 0;
         }
         
-        for(int i =0; i<arraySize; i++){
+        for(int i =0; i<lineCount; i++){
             TW[i] = Ctc[i] + Cnc[i] + Ci[i];
         }
-    }
-        
-    public void calculateCps(int [] Cs, int [] TW,int arraySize){
+        return TW;
+    }     
+    //perfect
+    public int[] calculateCps(int [] Cs, int [] TW, String code){
     
-        int Cps[] = new int[arraySize];
-
-        for(int i = 0; i<arraySize; i++){
+        int lineCount = countLines(code);
+        int Cps[] = new int[lineCount];
+        for(int i = 0; i<lineCount; i++){
                     Cps[i] = 0;
         }
         
-        for(int i =0; i<arraySize; i++){
+        for(int i =0; i<lineCount; i++){
             Cps[i] = Cs[i] * TW[i];
         }
+        return Cps;
     }
+    //perfect
+    public int calculateCp(int [] Cps, int [] Cr, String code){
     
+        int lineCount = countLines(code);
+        int Cp = 0;
+        
+        for(int i =0; i<lineCount; i++){
+            if(Cr[i] != 0){
+                Cp = Cp + Cr[i];
+            }
+            else{
+                Cp = Cp + Cps[i];
+            }
+        }
+        return Cp;
+    }
+
     
 
     public void calculateCnc(String code){
@@ -2255,7 +2201,6 @@ JFileChooser chooser = new JFileChooser();
        
     }
         
-    public void checkCpKeyWordJava(String code){}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calculateBtn;
