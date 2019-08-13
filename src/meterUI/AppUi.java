@@ -1353,44 +1353,26 @@ public class AppUi extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void calculateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculateBtnActionPerformed
-
-        //----------------------------------------- check java c++
-     
-        //-----------------------------------------
-        //-----------------------------------------
-        //-----------------------------------------
-        //-----------------------------------------
-
     }//GEN-LAST:event_calculateBtnActionPerformed
 
     private void chooseFiletxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseFiletxtActionPerformed
 JFileChooser chooser = new JFileChooser();
-//        System.out.println("here iiii" +chooser);
         chooser.showOpenDialog(null);
-//        System.out.println("here uuuu");
         File f = chooser.getSelectedFile();
-        
-//        System.out.print("here 000");
         String filename = f.getAbsolutePath();
-//        System.out.print("here 111");
-        
         try{
-//              System.out.print("here 2222");
-//              System.out.print("here 33333");
                 FileReader reader = new FileReader(filename);
                 BufferedReader br = new BufferedReader(reader);
                 codetxt.read(br, null);
                 br.close();
                 codetxt.requestFocus();
-
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, e);
-        }        // TODO add your handling code here:
+        }
     }//GEN-LAST:event_chooseFiletxtActionPerformed
 
     private void javaRbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_javaRbtnActionPerformed
-
         cppRbtn.setSelected(false);
     }//GEN-LAST:event_javaRbtnActionPerformed
 
@@ -1402,36 +1384,878 @@ JFileChooser chooser = new JFileChooser();
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AppUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AppUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AppUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AppUi.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new AppUi().setVisible(true);
             }
         });
     }
+    
+    //check how many lines in the code use to create the result array
+    public int countLines(String code){
+        Matcher m = Pattern.compile("\r\n|\r|\n").matcher(code);
+        int lines = 1;
+        while (m.find())
+        {
+            lines ++;
+        }
+    return lines;
+    }
+    
+    public String [] printLine(String code){
+        Scanner scanner = new Scanner(code);
+        int lineCount = countLines(code);
+        String linesArray[] = new String[lineCount]; 
+         for(int i = 0; i<lineCount; i++){
+                    linesArray[i] = " ";
+        }
+        int i = 0;
+        while (scanner.hasNextLine()) {
+  
+            linesArray[i] = scanner.nextLine();
+            i++;
+        }
+    return linesArray;
+    }
+    
+    public String[] printKeyWords(String code){        
+        //ArrayList<String> code_array = new ArrayList<>();
+        Scanner scanner = new Scanner(code);
+                
+        String text = code;        
+        
+        int arraySize = countLines(code);  
+        
+        String CsKeys[] = new String[arraySize];
+        int Cs[] = new int[arraySize];
+        String outputCs[] = new String[arraySize];
+
+
+        for(int i = 0; i<arraySize; i++){
+                    Cs[i] = 0;
+                    CsKeys[i] = " ";
+        }
+                
+
+        String[] lines = text.split("\\r?\\n");        
+        int i=0;
+        for(String line : lines){
+            if(line.contains("&")){
+                if(line.contains("&&")){
+                CsKeys[i] = CsKeys[i] + "&& ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "& ";
+                Cs[i] = Cs[i] + 2;
+                }
+            }
+            if(line.contains("public")){
+                CsKeys[i] = CsKeys[i] + "public ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("new")){
+                CsKeys[i] = CsKeys[i] + "new ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("delete")){
+                CsKeys[i] = CsKeys[i] + "delete ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("throw")){
+                CsKeys[i] = CsKeys[i] + "throw ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("throws")){
+                CsKeys[i] = CsKeys[i] + "throws ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("void")){
+                CsKeys[i] = CsKeys[i] + "void ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("double")){
+                CsKeys[i] = CsKeys[i] + "double ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("int")){
+                CsKeys[i] = CsKeys[i] + "int ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("float")){
+                CsKeys[i] = CsKeys[i] + "float ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("string")){
+                CsKeys[i] = CsKeys[i] + "string ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("printf")){
+                CsKeys[i] = CsKeys[i] + "printf ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("println")){
+                CsKeys[i] = CsKeys[i] + "println ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("print")){
+                CsKeys[i] = CsKeys[i] + "print ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("cout")){
+                CsKeys[i] = CsKeys[i] + "cout ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("cin")){
+                CsKeys[i] = CsKeys[i] + "cin ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("if’")){
+                CsKeys[i] = CsKeys[i] + "if ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("for")){
+                CsKeys[i] = CsKeys[i] + "for ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("while")){
+                CsKeys[i] = CsKeys[i] + "while ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("do")){
+                CsKeys[i] = CsKeys[i] + "do ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("switch")){
+                CsKeys[i] = CsKeys[i] + "switch ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("case")){
+                CsKeys[i] = CsKeys[i] + "case ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("endl’")){
+                CsKeys[i] = CsKeys[i] + "endl ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("'")){
+                CsKeys[i] = CsKeys[i] + "' ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("+")){
+                if(line.contains("++")){
+                CsKeys[i] = CsKeys[i] + "++ ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("+=")){
+                CsKeys[i] = CsKeys[i] + "+= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "+ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("-")){
+                if(line.contains("--")){
+                CsKeys[i] = CsKeys[i] + "-- ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("->")){
+                CsKeys[i] = CsKeys[i] + "-> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("-=")){
+                CsKeys[i] = CsKeys[i] + "-= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "- ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("=")){
+                if(line.contains("==")){
+                CsKeys[i] = CsKeys[i] + "== ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "= ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("!")){
+                if(line.contains("!=")){
+                CsKeys[i] = CsKeys[i] + "!= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "! ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains(">")){
+                if(line.contains(">=")){
+                CsKeys[i] = CsKeys[i] + ">= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>=")){
+                CsKeys[i] = CsKeys[i] + ">>= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>>=")){
+                CsKeys[i] = CsKeys[i] + ">>>= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>>")){
+                CsKeys[i] = CsKeys[i] + ">>> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>")){
+                CsKeys[i] = CsKeys[i] + ">> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "> ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("<")){
+                if(line.contains("<=")){
+                CsKeys[i] = CsKeys[i] + "<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<=")){
+                CsKeys[i] = CsKeys[i] + "<<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<<=")){
+                CsKeys[i] = CsKeys[i] + "<<<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<<")){
+                CsKeys[i] = CsKeys[i] + "<<< ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<")){
+                CsKeys[i] = CsKeys[i] + "<< ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "< ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("*")){
+                if(line.contains("*=")){
+                CsKeys[i] = CsKeys[i] + "*= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                //code for poiner
+                //else if(line.contains("**")){
+                //CsKeys[i] = CsKeys[i] + "** ";
+                //Cs[i] = Cs[i] + 1;
+                //}
+                else{
+                CsKeys[i] = CsKeys[i] + "* ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("/")){
+                if(line.contains("/=")){
+                CsKeys[i] = CsKeys[i] + "/= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("//")){
+                CsKeys[i] = CsKeys[i] + "";
+                Cs[i] = Cs[i] + 0;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "/ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("\\n")){
+                CsKeys[i] = CsKeys[i] + "\\n ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("\\t")){
+                CsKeys[i] = CsKeys[i] + "\\t ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("\\r")){
+                CsKeys[i] = CsKeys[i] + "\\r ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("|")){
+                if(line.contains("|=")){
+                CsKeys[i] = CsKeys[i] + "|= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("||")){
+                CsKeys[i] = CsKeys[i] + "|| ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "| ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("%")){
+                if(line.contains("%=")){
+                CsKeys[i] = CsKeys[i] + "%= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "% ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains(":")){
+                if(line.contains("::")){
+                CsKeys[i] = CsKeys[i] + ":: ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + ": ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("^")){
+                if(line.contains("^=")){
+                CsKeys[i] = CsKeys[i] + "^= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "^ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            
+            
+            
+            //System.out.print(CsKeys[i] + "      ");
+            //System.out.println(Cs[i]);
+            outputCs[i] = CsKeys[i];
+                        
+            
+
+
+            i = i + 1;
+        }   
+
+        return outputCs;
+       
+    }
+    
+    //chamudini
+    public String[] printCr(String code){        
+        //ArrayList<String> code_array = new ArrayList<>();
+        Scanner scanner = new Scanner(code);
+                
+        String text = code;        
+        
+        int arraySize = countLines(code);  
+        
+        String CsKeys[] = new String[arraySize];
+        int Cs[] = new int[arraySize];
+        String outputCs[] = new String[arraySize];
+
+
+        for(int i = 0; i<arraySize; i++){
+                    Cs[i] = 0;
+                    CsKeys[i] = " ";
+        }
+                
+
+        String[] lines = text.split("\\r?\\n");        
+        int i=0;
+        for(String line : lines){
+            
+            if(line.contains("&")){
+                if(line.contains("&&")){
+                CsKeys[i] = CsKeys[i] + "&& ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "& ";
+                Cs[i] = Cs[i] + 2;
+                }
+            }
+            if(line.contains("public")){
+                CsKeys[i] = CsKeys[i] + "public ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("new")){
+                CsKeys[i] = CsKeys[i] + "new ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("delete")){
+                CsKeys[i] = CsKeys[i] + "delete ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("throw")){
+                CsKeys[i] = CsKeys[i] + "throw ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("throws")){
+                CsKeys[i] = CsKeys[i] + "throws ";
+                Cs[i] = Cs[i] + 2;
+            }
+            if(line.contains("void")){
+                CsKeys[i] = CsKeys[i] + "void ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("double")){
+                CsKeys[i] = CsKeys[i] + "double ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("int")){
+                CsKeys[i] = CsKeys[i] + "int ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("float")){
+                CsKeys[i] = CsKeys[i] + "float ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("string")){
+                CsKeys[i] = CsKeys[i] + "string ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("printf")){
+                CsKeys[i] = CsKeys[i] + "printf ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("println")){
+                CsKeys[i] = CsKeys[i] + "println ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("print")){
+                CsKeys[i] = CsKeys[i] + "print ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("cout")){
+                CsKeys[i] = CsKeys[i] + "cout ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("cin")){
+                CsKeys[i] = CsKeys[i] + "cin ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("if")){
+                CsKeys[i] = CsKeys[i] + "if ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("for")){
+                CsKeys[i] = CsKeys[i] + "for ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("while")){
+                CsKeys[i] = CsKeys[i] + "while ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("do ")){
+                CsKeys[i] = CsKeys[i] + "do ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("switch")){
+                CsKeys[i] = CsKeys[i] + "switch ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("case")){
+                CsKeys[i] = CsKeys[i] + "case ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("endl’")){
+                CsKeys[i] = CsKeys[i] + "endl ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("'")){
+                CsKeys[i] = CsKeys[i] + "' ";
+                Cs[i] = Cs[i] + 1;
+            }
+            if(line.contains("+")){
+                if(line.contains("++")){
+                CsKeys[i] = CsKeys[i] + "++ ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("+=")){
+                CsKeys[i] = CsKeys[i] + "+= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "+ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("-")){
+                if(line.contains("--")){
+                CsKeys[i] = CsKeys[i] + "-- ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("->")){
+                CsKeys[i] = CsKeys[i] + "-> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("-=")){
+                CsKeys[i] = CsKeys[i] + "-= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "- ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("=")){
+                if(line.contains("==")){
+                CsKeys[i] = CsKeys[i] + "== ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "= ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("!")){
+                if(line.contains("!=")){
+                CsKeys[i] = CsKeys[i] + "!= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "! ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains(">")){
+                if(line.contains(">=")){
+                CsKeys[i] = CsKeys[i] + ">= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>=")){
+                CsKeys[i] = CsKeys[i] + ">>= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>>=")){
+                CsKeys[i] = CsKeys[i] + ">>>= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>>")){
+                CsKeys[i] = CsKeys[i] + ">>> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains(">>")){
+                CsKeys[i] = CsKeys[i] + ">> ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "> ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("<")){
+                if(line.contains("<=")){
+                CsKeys[i] = CsKeys[i] + "<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<=")){
+                CsKeys[i] = CsKeys[i] + "<<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<<=")){
+                CsKeys[i] = CsKeys[i] + "<<<= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<<")){
+                CsKeys[i] = CsKeys[i] + "<<< ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("<<")){
+                CsKeys[i] = CsKeys[i] + "<< ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "< ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("*")){
+                if(line.contains("*=")){
+                CsKeys[i] = CsKeys[i] + "*= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                //code for poiner
+                //else if(line.contains("**")){
+                //CsKeys[i] = CsKeys[i] + "** ";
+                //Cs[i] = Cs[i] + 1;
+                //}
+                else{
+                CsKeys[i] = CsKeys[i] + "* ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("/")){
+                if(line.contains("/=")){
+                CsKeys[i] = CsKeys[i] + "/= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("//")){
+                CsKeys[i] = CsKeys[i] + "";
+                Cs[i] = Cs[i] + 0;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "/ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("|")){
+                if(line.contains("|=")){
+                CsKeys[i] = CsKeys[i] + "|= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else if(line.contains("||")){
+                CsKeys[i] = CsKeys[i] + "|| ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "| ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("%")){
+                if(line.contains("%=")){
+                CsKeys[i] = CsKeys[i] + "%= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "% ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains(":")){
+                if(line.contains("::")){
+                CsKeys[i] = CsKeys[i] + ":: ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + ": ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            if(line.contains("^")){
+                if(line.contains("^=")){
+                CsKeys[i] = CsKeys[i] + "^= ";
+                Cs[i] = Cs[i] + 1;
+                }
+                else{
+                CsKeys[i] = CsKeys[i] + "^ ";
+                Cs[i] = Cs[i] + 1;
+                }
+            }
+            
+            
+            
+            //System.out.print(CsKeys[i] + "      ");
+            //System.out.println(Cs[i]);
+            outputCs[i] = String.valueOf(Cs[i]);
+                        
+            
+
+
+            i = i + 1;
+        }   
+
+        return outputCs;
+       
+    }
+    
+    /* Author panduka */
+    public String[] printCtc(String code) {
+		// ArrayList<String> code_array = new ArrayList<>();
+		Scanner scanner = new Scanner(code);
+
+		String text = code;
+
+		int arraySize = countLines(code);
+
+		String CtcKeys[] = new String[arraySize];
+		int Ctc[] = new int[arraySize];
+		String outputCtc[] = new String[arraySize];
+
+		for (int i = 0; i < arraySize; i++) {
+			Ctc[i] = 0;
+			CtcKeys[i] = " ";
+		}
+
+		String[] lines = text.split("\\r?\\n");
+		int i = 0;
+		
+		for (String line : lines) {
+
+			if (line.contains("&")) {				
+				if (line.contains("&&")) {
+					CtcKeys[i] = CtcKeys[i] + "&& ";
+					Ctc[i] = Ctc[i] + 1;
+				} else {
+					CtcKeys[i] = CtcKeys[i] + "& ";
+					Ctc[i] = Ctc[i] + 1;
+				}
+			}
+			
+			if (line.contains("|")) {				
+				if (line.contains("||")) {
+					CtcKeys[i] = CtcKeys[i] + "|| ";
+					Ctc[i] = Ctc[i] + 1;
+				} else {
+					CtcKeys[i] = CtcKeys[i] + "| ";
+					Ctc[i] = Ctc[i] + 1;
+				}
+			}
+			
+			if (line.contains("if ")) {
+				CtcKeys[i] = CtcKeys[i] + "if ";
+				Ctc[i] = Ctc[i] + 1;
+			}
+			if (line.contains("for ")) {
+				CtcKeys[i] = CtcKeys[i] + "for ";
+				Ctc[i] = Ctc[i] + 2;
+			}
+			if (line.contains("while ")) {
+				CtcKeys[i] = CtcKeys[i] + "while ";
+				Ctc[i] = Ctc[i] + 1;
+			}
+			if (line.contains("do ")) {
+				CtcKeys[i] = CtcKeys[i] + "do ";
+				Ctc[i] = Ctc[i] + 2;
+			}
+			if (line.contains("switch ")) {
+				CtcKeys[i] = CtcKeys[i] + "switch ";
+				Ctc[i] = Ctc[i] + 1;
+			}
+                        if (line.contains("catch ")) {
+				CtcKeys[i] = CtcKeys[i] + "switch ";
+				Ctc[i] = Ctc[i] + 1;
+			}
+			if (line.contains("case ")) {
+				CtcKeys[i] = CtcKeys[i] + "case ";
+				Ctc[i] = Ctc[i] + 1;
+			}
+	
+			outputCtc[i] = String.valueOf(Ctc[i]);
+
+			i = i + 1;
+		}
+
+		return outputCtc;
+	}
+    
+    public void checkCncKeyWordJava(String code){}
+    
+    public String[] printCi(String code){
+        Scanner scanner = new Scanner(code);
+                
+        String text = code;        
+        
+        int arraySize = countLines(code);  
+        
+        String CsKeys[] = new String[arraySize];
+        int Ci[] = new int[arraySize];
+        String outputCs[] = new String[arraySize];
+
+
+        for(int i = 0; i<arraySize; i++){
+                    Ci[i] = 1;
+        }
+                
+
+        String[] lines = text.split("\\r?\\n");        
+        int i=0;
+        int defaultVal = 2;
+        for(String line : lines){
+            
+            if(line.equals("}")){
+                
+                Ci[i] = 0;
+            }
+            else if(code.contains("class ")){
+                Ci[i] = defaultVal;
+                if(code.contains("extends ")){
+                Ci[i] = defaultVal +1;
+                }
+            }
+            outputCs[i] = String.valueOf(Ci[i]);
+            i = i + 1;
+        }   
+
+        return outputCs;
+       
+    } 
+                
+    public void calculateTw(int [] Ctc, int [] Cnc, int [] Ci,int arraySize){
+        
+        int TW[] = new int[arraySize];
+
+        for(int i = 0; i<arraySize; i++){
+                    TW[i] = 0;
+        }
+        
+        for(int i =0; i<arraySize; i++){
+            TW[i] = Ctc[i] + Cnc[i] + Ci[i];
+        }
+    }
+        
+    public void calculateCps(int [] Cs, int [] TW,int arraySize){
+    
+        int Cps[] = new int[arraySize];
+
+        for(int i = 0; i<arraySize; i++){
+                    Cps[i] = 0;
+        }
+        
+        for(int i =0; i<arraySize; i++){
+            Cps[i] = Cs[i] * TW[i];
+        }
+    }
+    
+    
+
+    public void calculateCnc(String code){
+        Scanner scanner = new Scanner(code);
+                
+        String text = code;        
+        
+        int arraySize = countLines(code);  
+        
+        String CncKeys[] = new String[arraySize];
+        int Cnc[] = new int[arraySize];
+
+        for(int i = 0; i<arraySize; i++){
+                    Cnc[i] = 0;
+                    CncKeys[i] = " ";
+        }
+                
+
+        String[] lines = text.split("\\r?\\n");        
+        int i=0;
+        for(String line : lines){
+            
+            
+            if(line.contains("if")){
+                        
+                String[] ifs = text.split("else");
+                System.out.println(ifs);
+
+            }
+            
+            System.out.print(CncKeys[i] + "      ");
+            System.out.println(Cnc[i]);
+
+            i = i + 1;
+        }   
+
+       
+    }
+        
+    public void checkCpKeyWordJava(String code){}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calculateBtn;
