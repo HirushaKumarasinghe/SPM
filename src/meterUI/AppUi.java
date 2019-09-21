@@ -1397,7 +1397,8 @@ public class AppUi extends javax.swing.JFrame {
             String arraKeyWords [] = commonAssertsObj.printKeyWords(code);
             int arrayCs [] = sizeObj.printCr(code,type);
             String arrayCtc [] = controlStuctureObj.printCtc(code);
-            int arrayCnc [] = sizeObj.printCr(code,type);
+//            int arrayCnc [] = sizeObj.printCr(code,type);
+            String arrayCnc [] = controlStuctureObj.calculateCnc(code);
             String arrayCi [] = inheritanceObj.printCi(code);
             int arrayTW [] = sizeObj.printCr(code,type);
             int arrayCps[] = sizeObj.printCr(code,type);

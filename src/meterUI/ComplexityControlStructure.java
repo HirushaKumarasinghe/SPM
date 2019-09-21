@@ -5,10 +5,13 @@
  */
 package meterUI;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import meterUI.Stack;
+import java.util.regex.Pattern;
 /**
  *
  * @author Panduka
@@ -16,11 +19,17 @@ import java.util.regex.Pattern;
 public class ComplexityControlStructure {
     
      // Pattern 
-        private static Pattern textInsideDoubleQuoted = Pattern.compile("\"(.*?)\"");
-        
-    CommonAsserts cmassertsobj = new CommonAsserts();
+    private static Pattern forPat = Pattern.compile("(for\\s*\\()([a-zA-Z]*\\s*\\w*\\s*=?\\s*[a-zA-Z0-9]*;+\\s*)(\\w+\\s*[><=!][=]*\\s*[a-zA-Z0-9]+)((\\s*\\&\\&|\\s*\\|\\||\\s*\\&|\\s*\\|)(\\s*\\w+\\s*[><=!][=]*\\s*[a-zA-Z0-9]+))*(;\\s*[a-zA-Z]+\\+\\+)(\\)\\s*\\{)");
+    private static Pattern whilePat = Pattern.compile("(while\\s*\\()(\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*)((\\s*\\&\\&|\\s*\\|\\||\\s*\\&|\\s*\\|)(\\s*\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*))*(\\.\\w+\\(\\\"*\\w*\\\"*\\))*(\\)\\s*\\{)");
+    private static Pattern doWhilePat = Pattern.compile("(do\\s*\\{)");
+    private static Pattern doWhileBotPat = Pattern.compile("(\\}\\s*while\\s*\\()(\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*)((\\s*\\&\\&|\\s*\\|\\||\\s*\\&|\\s*\\|)(\\s*\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*))*(\\.\\w+\\(\\\"*\\w*\\\"*\\))*(\\)\\;)");
+    private static Pattern ifPat = Pattern.compile("(\\w*\\s*if\\s*\\()(\\(*\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*\\)*)((\\s*\\&\\&|\\s*\\|\\||\\s*\\&|\\s*\\|)(\\s*\\(*\\w+\\s*[><=!]*[=]*\\s*[a-zA-Z0-9]*\\)*))*(\\.\\w+\\(\\\"*\\w*\\\"*\\))*(\\)\\s*\\{)");
+    private static Pattern elsePat = Pattern.compile("(\\}*\\s*else\\s*\\{)");
+    private static Pattern textInsideDoubleQuoted = Pattern.compile("\"(.*?)\"");
+    public static Stack stack;
 
-    
+    CommonAsserts cmassertsobj = new CommonAsserts();
+     
     public String[] printCtc(String code) {
 		// ArrayList<String> code_array = new ArrayList<>();
 		Scanner scanner = new Scanner(code);
@@ -32,7 +41,7 @@ public class ComplexityControlStructure {
 		String CtcKeys[] = new String[arraySize];
 		int Ctc[] = new int[arraySize];
 		String outputCtc[] = new String[arraySize];
-
+                
 		for (int i = 0; i < arraySize; i++) {
 			Ctc[i] = 0;
 			CtcKeys[i] = " ";
@@ -201,40 +210,104 @@ public class ComplexityControlStructure {
     }
     
     
-    public void calculateCnc(String code){
-        Scanner scanner = new Scanner(code);
-                
+    public String[] calculateCnc(String code){
+         
+        Scanner scanner = new Scanner(code);           
         String text = code;        
         
         int arraySize = cmassertsobj.countLines(code);  
         
         String CncKeys[] = new String[arraySize];
         int Cnc[] = new int[arraySize];
+        String outputCnc[] = new String[arraySize];
+        stack = new Stack();
 
         for(int i = 0; i<arraySize; i++){
                     Cnc[i] = 0;
                     CncKeys[i] = " ";
         }
                 
-
+  
         String[] lines = text.split("\\r?\\n");
         int i=0;
         for(String line : lines){
             
+            line = line.trim(); 
             
-            if(line.contains("if")){
-                        
-                String[] ifs = text.split("else");
-                System.out.println(ifs);
+            try {
+                
+            Matcher q = textInsideDoubleQuoted.matcher(line);
+            while (q.find()) {
+                line = line.replace(q.group(0), "");
+            }
+                                
+            Matcher forMatcher = forPat.matcher(line);
+            if (forMatcher.matches() && line.startsWith(forMatcher.group(1))) {
+                List<String> forWords = Arrays.asList(line.replaceAll("[\\(\\+\\=\\)\\;\\>\\<\\!]", " ").split(" "));
+                for (String forChar : forWords) {
+                    if (forChar.equals("{")) {
+                        stack.push("{");
+                    }
+                }
+            }
 
+            Matcher whileMatcher = whilePat.matcher(line);
+            if (whileMatcher.matches() && line.startsWith(whileMatcher.group(1))) {         
+                List<String> whileWords = Arrays.asList(line.replaceAll("[\\(\\.\\=\\)\\>\\<\\!\\\"]", " ").split(" "));
+                for (String whileChar : whileWords) {                  
+                    if (whileChar.equals("{")) {
+                        stack.push("{");
+                    }
+                }
+            }
+
+            Matcher doWhileTopMatcher = doWhilePat.matcher(line);
+            if (doWhileTopMatcher.matches() && line.startsWith(doWhileTopMatcher.group(1))) {             
+                List<String> doWhileWords = Arrays.asList(line.split(" "));
+                for (String doWhileChar : doWhileWords) {
+                    if (doWhileChar.equals("{") || doWhileChar.contains("{")) {
+                        stack.push("{");
+                    }
+                }
+            }
+
+            Matcher elseMatcher = elsePat.matcher(line);
+
+            if (elseMatcher.matches() && line.startsWith(elseMatcher.group(1))) {
+                List<String> elseWords = Arrays.asList(line.split(" "));
+                for (String elseChar : elseWords) {
+                    if (elseChar.equals("{") || elseChar.contains("{")) {
+                        stack.push("{");
+                    }
+                }
             }
             
-            System.out.print(CncKeys[i] + "      ");
-            System.out.println(Cnc[i]);
+            Matcher ifMatcher = ifPat.matcher(line);
+            if (ifMatcher.matches() && line.startsWith(ifMatcher.group(1))) {
+                //ctc = ctc + 1;
+                List<String> ifWords = Arrays.asList(line.replaceAll("[\\(\\.\\=\\)\\>\\<\\!\\\"]", " ").split(" "));
+                for (String ifChar : ifWords) {
+                    if (ifChar.equals("{")) {
+                        stack.push("{");
+                    }
+                }
+            }
+   
+            if (stack.peek() != 0 && (line.startsWith("}") || line.endsWith("}"))) {
+                String val = stack.pop();
+            }
 
-            i = i + 1;
+             Cnc[i] = Cnc[i] + stack.peek();
+             System.out.println(Cnc[i]);
+                       
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            
+         outputCnc[i] = String.valueOf(Cnc[i]);
+         i = i + 1;   
+          
         }   
-
-       
+       return outputCnc;
     }
 }
